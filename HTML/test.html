@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字檔匯出測試</title>
+</head>
+<body>
+    <h1>文字檔匯出功能測試</h1>
+    <p>這個頁面用來測試文字檔匯出功能是否在Chrome中正常工作。</p>
+    
+    <div style="margin: 20px 0;">
+        <button onclick="testExport()">測試匯出文字檔</button>
+        <button onclick="testDownload()">測試下載功能</button>
+    </div>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9;"></div>
+
+    <script>
+        // 測試用的文字內容
+        function testExport() {
+            const testContent = `測試文字檔匯出
+================
+
+這是一個測試文字檔，用來驗證Chrome瀏覽器的文字檔下載功能。
+
+測試項目：
+- 中文字符支援
+- 特殊字符處理
+- 檔案下載功能
+- Chrome兼容性
+
+測試時間：${new Date().toLocaleString('zh-TW')}
+瀏覽器：${navigator.userAgent}
+
+如果這個檔案能夠成功下載並正確顯示中文內容，
+表示文字檔匯出功能在Chrome中運作正常。`;
+
+            downloadTextFile(testContent, 'test_export.txt');
+            document.getElementById('result').innerHTML = '<p style="color: green;">✓ 測試文字檔已生成並嘗試下載</p>';
+        }
+
+        // 測試下載功能
+        function testDownload() {
+            const testContent = 'Hello World! 這是一個簡單的測試。';
+            
+            try {
+                const blob = new Blob([testContent], {type: 'text/plain;charset=utf-8'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'simple_test.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                
+                document.getElementById('result').innerHTML = '<p style="color: green;">✓ 簡單下載測試成功</p>';
+            } catch (e) {
+                document.getElementById('result').innerHTML = '<p style="color: red;">✗ 下載測試失敗: ' + e.message + '</p>';
+            }
+        }
+
+        // 從主腳本複製下載函數
+        function downloadTextFile(content, filename) {
+            try {
+                const bom = '\uFEFF';
+                const blob = new Blob([bom + content], {type: 'text/plain;charset=utf-8'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+            } catch (e) {
+                fallbackDownload(content, filename);
+            }
+        }
+
+        function fallbackDownload(content, filename) {
+            try {
+                const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
+                if(window.navigator.msSaveBlob) {
+                    window.navigator.msSaveBlob(blob, filename);
+                } else {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                }
+            } catch(e) {
+                const win = window.open();
+                win.document.write('<pre>' + content.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>');
+                win.document.title = filename;
+                alert('瀏覽器無法自動下載，請手動複製文本內容。');
+            }
+        }
+
+        // 頁面載入時顯示瀏覽器資訊
+        window.onload = function() {
+            const info = `
+                <h3>瀏覽器資訊</h3>
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>支援 Blob:</strong> ${typeof Blob !== 'undefined' ? '✓' : '✗'}</p>
+                <p><strong>支援 URL.createObjectURL:</strong> ${typeof URL !== 'undefined' && URL.createObjectURL ? '✓' : '✗'}</p>
+                <p><strong>支援 download 屬性:</strong> ${document.createElement('a').download !== undefined ? '✓' : '✗'}</p>
+            `;
+            document.getElementById('result').innerHTML = info;
+        };
+    </script>
+</body>
+</html>

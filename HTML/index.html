@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>起辦單文字匯出－v1.00.27</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- 頂部導航 -->
+<div class="header-nav">
+<button id="btnPage1" class="nav-btn active" onclick="showPage('page1')">起辦單</button>
+</div>
+
+<!-- 第一頁：起辦單 -->
+<div id="page1" class="page active">
+<h2>起辦單文字匯出</h2>
+
+<div class="form-group">
+<label for="typeSelect" class="required">類型</label>
+<select id="typeSelect" onchange="toggleType()">
+<option value="">請選擇</option>
+<option value="柯印">柯印</option>
+<option value="絲印">絲印</option>
+<option value="速印">速印</option>
+<option value="燙畫">燙畫</option>
+<option value="其他">其他</option>
+</select>
+<input type="text" id="typeOther" placeholder="請輸入其他" style="margin-top:6px; display:none;" />
+</div>
+
+<div class="form-group">
+<label for="customerCode">客戶編號</label>
+<input type="text" id="customerCode" />
+</div>
+
+<div class="form-group">
+<label for="sampleNumber">單號</label>
+<input type="text" id="sampleNumber" />
+</div>
+
+<div class="form-group">
+<label for="sampleName">樣辦名稱</label>
+<input type="text" id="sampleName" />
+</div>
+
+<div class="form-group">
+<label for="material">材質</label>
+<input type="text" id="material" />
+</div>
+
+<div class="form-group">
+<label for="materialType">材質類型</label>
+<select id="materialType" onchange="materialTypeChanged()">
+<option value="">請選擇</option>
+<option value="uncoated">FSC MIX Uncoated Cardstock ***g</option>
+<option value="C1S">FSC MIX C1S Paper ***g</option>
+<option value="C2S">FSC MIX C2S Paper ***g</option>
+<option value="fancy">FSC Fancy Paper ***g</option>
+<option value="recycled">FSC Recycled Paper ***g</option>
+<option value="other">其他</option>
+</select>
+<input type="text" id="materialOther" placeholder="請輸入其他" style="margin-top:6px; display:none;" />
+</div>
+
+<div class="form-group">
+<label>完成尺寸</label>
+<div class="form-inline">
+<input type="text" id="finishSizeL" class="size-input" placeholder="長" />
+<span>×</span>
+<input type="text" id="finishSizeW" class="size-input" placeholder="寬" />
+<span>×</span>
+<input type="text" id="finishSizeH" class="size-input" placeholder="高" />
+<select id="finishSizeUnit" class="size-unit">
+<option value="MM">MM</option>
+<option value="CM">CM</option>
+<option value="Inch">Inch</option>
+</select>
+</div>
+</div>
+
+<div class="form-group">
+<label>展開尺寸</label>
+<div class="form-inline">
+<input type="text" id="unfoldSizeL" class="size-input" placeholder="長" />
+<span>×</span>
+<input type="text" id="unfoldSizeW" class="size-input" placeholder="寬" />
+<span>×</span>
+<input type="text" id="unfoldSizeH" class="size-input" placeholder="高" />
+<select id="unfoldSizeUnit" class="size-unit">
+<option value="MM">MM</option>
+<option value="CM">CM</option>
+<option value="Inch">Inch</option>
+</select>
+</div>
+</div>
+
+<div class="form-group">
+<label for="printColors">印色</label>
+<input type="text" id="printColors" />
+</div>
+
+<div class="form-group">
+<label>加工 (可選多項)</label>
+<div class="checkbox-group" id="processingGroup">
+<div class="checkbox-item">
+<input type="checkbox" id="proc_none" value="無加工" />
+<label for="proc_none">無加工</label>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_laminate" value="過膠" />
+<label for="proc_laminate">過膠</label>
+<select id="opt_laminate" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_uv" value="過油" />
+<label for="proc_uv">過油</label>
+<select id="opt_uv" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_foil" value="燙印" />
+<label for="proc_foil">燙印</label>
+<select id="opt_foil" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_deboss" value="擊凹" />
+<label for="proc_deboss">擊凹</label>
+<select id="opt_deboss" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_emboss" value="擊凸" />
+<label for="proc_emboss">擊凸</label>
+<select id="opt_emboss" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_texture" value="壓紋" />
+<label for="proc_texture">壓紋</label>
+<select id="opt_texture" class="process-option" style="display:none;">
+<option value="">指定面向</option>
+<option value="正面">正面</option>
+<option value="底面">底面</option>
+<option value="面底">面底</option>
+</select>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_cut" value="裁切" />
+<label for="proc_cut">裁切</label>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_laminating" value="裱紙" />
+<label for="proc_laminating">裱紙</label>
+<select id="opt_laminating" class="process-option" style="display:none;">
+<option value="">請選擇裱數</option>
+<option value="1裱">1裱</option>
+<option value="2裱">2裱</option>
+<option value="3裱">3裱</option>
+<option value="4裱">4裱</option>
+<option value="5裱">5裱</option>
+<option value="6裱">6裱</option>
+<option value="7裱">7裱</option>
+<option value="8裱">8裱</option>
+<option value="9裱">9裱</option>
+<option value="10裱">10裱</option>
+</select>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_die" value="模啤" />
+<label for="proc_die">模啤</label>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_drill" value="切鑽" />
+<label for="proc_drill">切鑽</label>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_punch" value="打孔" />
+<label for="proc_punch">打孔</label>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_score" value="壓線" />
+<label for="proc_score">壓線</label>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="proc_headshake" value="搖頭啤" />
+<label for="proc_headshake">搖頭啤</label>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_folding" value="摺法" />
+<label for="proc_folding">摺法</label>
+<select id="opt_folding" class="process-option" style="display:none;">
+<option value="">請選擇摺法</option>
+<option value="對摺">對摺</option>
+<option value="風琴摺">風琴摺</option>
+<option value="騎馬釘">騎馬釘</option>
+<option value="膠裝">膠裝</option>
+<option value="剪摺">剪摺</option>
+<option value="覆摺">覆摺</option>
+<option value="掛摺">掛摺</option>
+</select>
+</div>
+<div class="process-wrap">
+<input type="checkbox" id="proc_cutting" value="帶類切法" />
+<label for="proc_cutting">帶類切法</label>
+<select id="opt_cutting" class="process-option" style="display:none;">
+<option value="">請選擇切法</option>
+<option value="超切">超切</option>
+<option value="熱切">熱切</option>
+<option value="冷切">冷切</option>
+</select>
+</div>
+</div>
+<input type="text" id="processingOther" placeholder="其他加工，請輸入" style="margin-top:8px;" />
+</div>
+
+<div class="form-group">
+<label>配套 (多選)</label>
+<div class="checkbox-group" id="accessoriesGroup">
+<div class="checkbox-item">
+<input type="checkbox" id="acc_none" value="無配套" />
+<label for="acc_none">無配套</label>
+</div>
+<div class="checkbox-item"><input type="checkbox" value="過臘棉繩" /><label>過臘棉繩</label></div>
+<div class="checkbox-item"><input type="checkbox" value="滌綸繩" /><label>滌綸繩</label></div>
+<div class="checkbox-item"><input type="checkbox" value="尼龍繩" /><label>尼龍繩</label></div>
+<div class="checkbox-item"><input type="checkbox" value="棉繩" /><label>棉繩</label></div>
+<div class="checkbox-item"><input type="checkbox" value="扣針" /><label>扣針</label></div>
+<div class="checkbox-item"><input type="checkbox" value="葫蘆扣針" /><label>葫蘆扣針</label></div>
+<div class="checkbox-item"><input type="checkbox" value="吊粒" /><label>吊粒</label></div>
+<div class="checkbox-item"><input type="checkbox" value="包裝" /><label>包裝</label></div>
+<div class="checkbox-item"><input type="checkbox" value="包裝盒" /><label>包裝盒</label></div>
+<div class="checkbox-item"><input type="checkbox" value="包裝袋" /><label>包裝袋</label></div>
+<div class="checkbox-item"><input type="checkbox" value="說明書" /><label>說明書</label></div>
+<div class="checkbox-item"><input type="checkbox" value="標籤" /><label>標籤</label></div>
+<div class="checkbox-item"><input type="checkbox" value="貼紙" /><label>貼紙</label></div>
+<div class="checkbox-item"><input type="checkbox" value="卡片" /><label>卡片</label></div>
+<div class="checkbox-item"><input type="checkbox" value="插頁" /><label>插頁</label></div>
+<div class="checkbox-item"><input type="checkbox" value="信封" /><label>信封</label></div>
+</div>
+<input type="text" id="accessoriesOther" placeholder="其他配套，請輸入" style="margin-top:8px;" />
+</div>
+
+<div class="form-group">
+<label for="quantity">數量</label>
+<input type="number" id="quantity" value="60" />
+</div>
+
+<div class="form-group">
+<label>備註選項</label>
+<div class="checkbox-group">
+<div class="checkbox-item">
+<input type="checkbox" id="remark_default" />
+<label for="remark_default">預設備註內容</label>
+</div>
+<div class="checkbox-item">
+<input type="checkbox" id="remark_custom" />
+<label for="remark_custom">自訂備註</label>
+</div>
+</div>
+<textarea id="remarksCustom" placeholder="請輸入自訂備註" style="margin-top:8px; display:none;"></textarea>
+</div>
+
+<div class="btn-container">
+<button type="button" class="btn" onclick="exportTxt()">匯出文字檔案</button>
+<button type="button" class="btn" onclick="sendMail()">建立新電郵</button>
+<button type="button" class="btn" onclick="resetForm()">清除內容</button>
+</div>
+</div>
+
+<!-- 版本資訊 -->
+<div class="version">
+版本：v1.00.27 | 最新更新：2025年1月27日
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
